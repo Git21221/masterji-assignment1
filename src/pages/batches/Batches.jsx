@@ -1,13 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { batches } from "../../util/batches";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { MdOutlineDragIndicator } from "react-icons/md";
+import { FaArrowDown, FaArrowUp } from "react-icons/fa";
+import Delete from "../../components/Delete";
 
 const ItemType = "BATCH";
 
-const DraggableBatch = ({ batch, index, moveBatch }) => {
+const DraggableBatch = ({
+  batch,
+  index,
+  moveBatch,
+  moveToTop,
+  moveToBottom,
+  deleteBatch,
+}) => {
+  const [optionOpen, setOptionOpen] = useState(false);
   const ref = React.useRef(null);
 
   const [, drop] = useDrop({
@@ -22,7 +32,8 @@ const DraggableBatch = ({ batch, index, moveBatch }) => {
         return;
       }
       const hoverBoundingRect = ref.current?.getBoundingClientRect();
-      const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+      const hoverMiddleY =
+        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
       const clientOffset = monitor.getClientOffset();
       const hoverClientY = clientOffset.y - hoverBoundingRect.top;
 
@@ -51,7 +62,7 @@ const DraggableBatch = ({ batch, index, moveBatch }) => {
   return (
     <div
       ref={ref}
-      className="batch-card flex items-center justify-between px-5 py-[9px] rounded-lg"
+      className="batch-card flex items-center justify-between px-5 py-[9px] rounded-lg max-w-[1025px]"
       style={{
         boxShadow: "1px 1px 8px 0px rgba(0, 0, 0, 0.25)",
         opacity: isDragging ? 0.5 : 1,
@@ -78,8 +89,21 @@ const DraggableBatch = ({ batch, index, moveBatch }) => {
           <span className="batch-tag bg-[#DBFFCE] border border-[#b4b4b4] rounded-[4px] text-sm w-[82px] text-center leading-[16.94px]">
             {batch.tag}
           </span>
-          <span>
+          <span
+            onClick={() => {
+              setOptionOpen(!optionOpen);
+            }}
+          >
             <BsThreeDotsVertical className="text-xl text-black" />
+            {optionOpen && (
+              <Option
+                optionOpen={optionOpen}
+                setOptionOpen={setOptionOpen}
+                moveToTop={() => moveToTop(index)}
+                moveToBottom={() => moveToBottom(index)}
+                deleteBatch={() => deleteBatch(index)}
+              />
+            )}
           </span>
         </div>
       </div>
@@ -87,14 +111,72 @@ const DraggableBatch = ({ batch, index, moveBatch }) => {
   );
 };
 
+const Option = ({ optionOpen, setOptionOpen, moveToTop, moveToBottom, deleteBatch }) => {
+  const optionRef = React.useRef(null);
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (optionRef.current && !optionRef.current.contains(e.target)) {
+        setOptionOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [optionOpen]);
+  return (
+    <div
+      ref={optionRef}
+      className="option absolute rounded-lg pt-5 pr-3 pb-5 pl-5 flex flex-col justify-center gap-4 bg-[#F7F7F7]"
+      style={{ boxShadow: "1px 1px 8px 0px rgba(0,0,0,0.25)" }}
+    >
+      <span
+        className="option-item flex items-center gap-2 leading-[19.36px] text-nowrap text-[16px] font-normal"
+        onClick={() => {
+          moveToTop();
+        }}
+      >
+        <FaArrowUp />
+        Move To Top
+      </span>
+      <span
+        className="option-item flex items-center gap-2 leading-[19.36px] text-nowrap text-[16px] font-normal"
+        onClick={() => {
+          moveToBottom();
+        }}
+      >
+        <FaArrowDown />
+        Move To Bottom
+      </span>
+      <span className="option-item flex items-center gap-2 leading-[19.36px] text-nowrap text-red-500 text-[16px] font-normal" onClick={() => {
+        deleteBatch();
+      }}>
+        <Delete />
+        Remove
+      </span>
+    </div>
+  );
+};
+
 function Batches() {
   const [batchItems, setBatchItems] = useState(batches);
+  console.log(batchItems);
 
   const moveBatch = (fromIndex, toIndex) => {
     const updatedItems = [...batchItems];
     const [movedItem] = updatedItems.splice(fromIndex, 1);
     updatedItems.splice(toIndex, 0, movedItem);
     setBatchItems(updatedItems);
+  };
+
+  const moveToTop = (index) => {
+    moveBatch(index, 0);
+  };
+
+  const moveToBottom = (index) => {
+    moveBatch(index, batchItems.length - 1);
+  };
+
+  const deleteBatch = (index) => {
+    setBatchItems(batchItems.filter((_, i) => i !== index));
   };
 
   return (
@@ -119,6 +201,9 @@ function Batches() {
                 batch={batch}
                 index={index}
                 moveBatch={moveBatch}
+                moveToTop={moveToTop}
+                moveToBottom={moveToBottom}
+                deleteBatch={deleteBatch}
               />
             ))}
           </div>
