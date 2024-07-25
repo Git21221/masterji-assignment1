@@ -3,6 +3,7 @@ import Button from "./Button";
 import { validOtp } from "../../util/otp";
 import Input from "./Input";
 import { useLocation } from "react-router-dom";
+import Heading from "./Heading";
 
 function OtpForm() {
   const inputRef = useRef([]);
@@ -13,7 +14,6 @@ function OtpForm() {
     success: false,
     wrong: false,
   });
-  console.log(fillingState);
   const handleChanges = (e, index) => {
     const value = e.target.value;
     const testOtp = /^\d$/.test(value);
@@ -56,22 +56,13 @@ function OtpForm() {
     }
   };
 
-  const params = useLocation();
-  console.log(params);
-
   return (
     <div
       className="bg-[#F9F7F7] h-[514px] max-w-[756px] rounded-[18px] mx-auto mt-[100px]"
       style={{ boxShadow: "2px 2px 3px 0px rgba(0, 0, 0, 0.25)" }}
     >
       <div className="flex flex-col items-center">
-        <p className="font-bold text-[40px] tracking-[-2px] leading-[52.08px] mt-[30px]">
-          Mobile Phone Verification
-        </p>
-        <p className="text-center font-sans text-[#BFBFBF] text-[25px] font-normal tracking-[0px] mb-[36px]">
-          Enter the 4-digit verification code that was sent to <br /> your phone
-          number.
-        </p>
+        <Heading />
         <div className="sameWidth flex flex-col gap-[24px]">
           <form>
             <div className="inputs flex items-center justify-center gap-[19px]">

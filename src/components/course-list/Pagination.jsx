@@ -36,7 +36,7 @@ const DropdownPagination = ({
           )}
         </button>
         {isOpen && (
-          <div className="absolute z-10 mt-2 w-16 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+          <div className="absolute -top-full -left-full z-10 mt-2 w-16 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
             <div
               className="py-1"
               role="menu"
