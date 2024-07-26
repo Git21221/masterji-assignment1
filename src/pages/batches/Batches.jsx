@@ -1,216 +1,191 @@
 import React, { useEffect, useState } from "react";
-import { DndProvider, useDrag, useDrop } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { batches } from "../../util/batches";
-import { BsThreeDotsVertical } from "react-icons/bs";
-import { MdOutlineDragIndicator } from "react-icons/md";
-import { FaArrowDown, FaArrowUp } from "react-icons/fa";
-import Delete from "../../components/Delete";
+import { AgGridReact } from "ag-grid-react";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
+import { courseList as data } from "../../util/courseList";
+import { height } from "@mui/system";
+import "./Batches.css";
+import Pagination from "../../components/batches/Pagination";
+import Heading from "../../components/batches/Heading";
+import Search from "../../components/batches/Search";
 
-const ItemType = "BATCH";
+function CourseList() {
+  const [rowData, setRowData] = useState(data);
+  const [pageSize, setPageSize] = useState(10);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [currentPageData, setCurrentPageData] = useState([]);
+  const [searchedData, setSearchedData] = useState([]);
+  const len = searchedData.length > 0 ? searchedData.length : data.length;
 
-const DraggableBatch = ({
-  batch,
-  index,
-  moveBatch,
-  moveToTop,
-  moveToBottom,
-  deleteBatch,
-}) => {
-  const [optionOpen, setOptionOpen] = useState(false);
-  const ref = React.useRef(null);
-
-  const [, drop] = useDrop({
-    accept: ItemType,
-    hover(item, monitor) {
-      if (!ref.current) {
-        return;
-      }
-      const dragIndex = item.index;
-      const hoverIndex = index;
-      if (dragIndex === hoverIndex) {
-        return;
-      }
-      const hoverBoundingRect = ref.current?.getBoundingClientRect();
-      const hoverMiddleY =
-        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-      const clientOffset = monitor.getClientOffset();
-      const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-
-      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-        return;
-      }
-      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-        return;
-      }
-
-      moveBatch(dragIndex, hoverIndex);
-      item.index = hoverIndex;
+  const columnDefs = [
+    {
+      headerName: "Title",
+      field: "title",
+      cellRenderer: (params) => (
+        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+          <img
+            src={params.data.image}
+            alt={params.data.title}
+            style={{
+              width: 106,
+              height: 60,
+              borderRadius: 8,
+              marginRight: 10,
+              boxShadow: "1px 1px 1px 0px rgba(0, 0, 0, 0.25)",
+            }} // Ensure image fits properly
+          />
+          {params.value}
+        </div>
+      ),
+      flex: 3,
     },
-  });
-
-  const [{ isDragging }, drag] = useDrag({
-    type: ItemType,
-    item: { type: ItemType, id: batch.id, index },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  });
-
-  drag(drop(ref));
-
-  return (
-    <div
-      ref={ref}
-      className="batch-card flex items-center justify-between px-5 py-[9px] rounded-lg max-w-[1025px]"
-      style={{
-        boxShadow: "1px 1px 8px 0px rgba(0, 0, 0, 0.25)",
-        opacity: isDragging ? 0.5 : 1,
-      }}
-    >
-      <div className="batch-details flex items-center gap-4">
-        <span>
-          <MdOutlineDragIndicator className="text-[40px] text-[#7F7F7F]" />
-        </span>
-        <img
-          className="batch-image w-[133px] h-[75px] rounded-lg"
-          src={batch.imageUrl}
-          alt={batch.name}
-        />
-        <span className="batch-description font-medium text-xl leading-[24.2px]">
-          {batch.description}
-        </span>
-      </div>
-      <div className="rightPart w-[226px] flex justify-between gap-5">
-        <span className="batch-price text-lg leading-[21.78px] font-normal w-max text-left">
-          {batch.price ? `Rs. ${batch.price}/-` : "Free"}
-        </span>
-        <div className="flex items-center gap-5">
-          <span className="batch-tag bg-[#DBFFCE] border border-[#b4b4b4] rounded-[4px] text-sm w-[82px] text-center leading-[16.94px]">
-            {batch.tag}
-          </span>
+    {
+      headerName: "Start Date",
+      field: "startDate",
+      flex: 1,
+      cellRenderer: (params) => (
+        <span className="flex items-center h-full">{params.value}</span>
+      ),
+    },
+    {
+      headerName: "End Date",
+      field: "endDate",
+      flex: 1,
+      cellRenderer: (params) => (
+        <span className="flex items-center h-full">{params.value}</span>
+      ),
+    },
+    {
+      headerName: "Price",
+      field: "price",
+      flex: 1,
+      cellRenderer: (params) => (
+        <span className="flex items-center h-full">{params.value}</span>
+      ),
+    },
+    {
+      headerName: "Validity/Expiry",
+      field: "validity",
+      flex: 1.1,
+      cellRenderer: (params) => (
+        <span className="flex items-center h-full">{params.value}</span>
+      ),
+    },
+    {
+      headerName: "Status",
+      field: "status",
+      cellRenderer: (params) => (
+        <div className="h-full flex items-center">
           <span
-            onClick={() => {
-              setOptionOpen(!optionOpen);
-            }}
+            className={`text-[#4B4747] text-[14px] font-medium leading-[16.94px] px-2 py-1 rounded ${
+              params.value === "Published"
+                ? "bg-[#DEFFDE] border border-[#4ED04B]"
+                : "bg-[#F3F3F3] border border-[#A4A4A4]"
+            }`}
           >
-            <BsThreeDotsVertical className="text-xl text-black" />
-            {optionOpen && (
-              <Option
-                optionOpen={optionOpen}
-                setOptionOpen={setOptionOpen}
-                moveToTop={() => moveToTop(index)}
-                moveToBottom={() => moveToBottom(index)}
-                deleteBatch={() => deleteBatch(index)}
-              />
-            )}
+            {params.value}
           </span>
         </div>
-      </div>
-    </div>
-  );
-};
+      ),
+      flex: 1,
+    },
+  ];
 
-const Option = ({ optionOpen, setOptionOpen, moveToTop, moveToBottom, deleteBatch }) => {
-  const optionRef = React.useRef(null);
   useEffect(() => {
-    const handleClick = (e) => {
-      if (optionRef.current && !optionRef.current.contains(e.target)) {
-        setOptionOpen(false);
+    setCurrentPageData(data.slice(0, pageSize));
+    setRowData(data.slice(0, pageSize));
+  }, []);
+
+  const changePageSize = (size) => {
+    setPageSize(size);
+    setPageIndex(0);
+    setCurrentPageData(data.slice(0, size ? size : pageSize));
+    // setRowData(data.slice(0, size ? size : pageSize));
+    setRowData(
+      searchedData.length > 0
+        ? searchedData.slice(0, size ? size : pageSize)
+        : data.slice(0, size ? size : pageSize)
+    );
+  };
+
+  const gridOptions = {
+    rowHeight: 100,
+  };
+
+  const leftArrowClick = () => {
+    const newIndex = pageIndex - 1;
+    if (newIndex < 0) return;
+    setPageIndex(newIndex);
+    setCurrentPageData(
+      data.slice(newIndex * pageSize, (newIndex + 1) * pageSize)
+    );
+    // setRowData(data.slice(newIndex * pageSize, (newIndex + 1) * pageSize));
+    setRowData(
+      searchedData.length > 0
+        ? searchedData.slice(newIndex * pageSize, (newIndex + 1) * pageSize)
+        : data.slice(newIndex * pageSize, (newIndex + 1) * pageSize)
+    );
+  };
+
+  const rightArrowClick = () => {
+    const newIndex = pageIndex + 1;
+    if (newIndex * pageSize >= len) return;
+    setPageIndex(newIndex);
+    setCurrentPageData(
+      data.slice(newIndex * pageSize, (newIndex + 1) * pageSize)
+    );
+    // setRowData(data.slice(newIndex * pageSize, (newIndex + 1) * pageSize));
+    setRowData(
+      searchedData.length > 0
+        ? searchedData.slice(newIndex * pageSize, (newIndex + 1) * pageSize)
+        : data.slice(newIndex * pageSize, (newIndex + 1) * pageSize)
+    );
+  };
+
+  useEffect(() => {
+    const onkeydown = (e) => {
+      if ((e.altKey && e.key === "k") || (e.metaKey && e.key === "k")) {
+        document.querySelector("input").focus();
       }
     };
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [optionOpen]);
-  return (
-    <div
-      ref={optionRef}
-      className="option absolute rounded-lg pt-5 pr-3 pb-5 pl-5 flex flex-col justify-center gap-4 bg-[#F7F7F7]"
-      style={{ boxShadow: "1px 1px 8px 0px rgba(0,0,0,0.25)" }}
-    >
-      <span
-        className="option-item flex items-center gap-2 leading-[19.36px] text-nowrap text-[16px] font-normal"
-        onClick={() => {
-          moveToTop();
-        }}
-      >
-        <FaArrowUp />
-        Move To Top
-      </span>
-      <span
-        className="option-item flex items-center gap-2 leading-[19.36px] text-nowrap text-[16px] font-normal"
-        onClick={() => {
-          moveToBottom();
-        }}
-      >
-        <FaArrowDown />
-        Move To Bottom
-      </span>
-      <span className="option-item flex items-center gap-2 leading-[19.36px] text-nowrap text-red-500 text-[16px] font-normal" onClick={() => {
-        deleteBatch();
-      }}>
-        <Delete />
-        Remove
-      </span>
-    </div>
-  );
-};
+    document.addEventListener("keydown", onkeydown);
+    return () => document.removeEventListener("keydown", onkeydown);
+  }, [onkeydown]);
 
-function Batches() {
-  const [batchItems, setBatchItems] = useState(batches);
-  console.log(batchItems);
-
-  const moveBatch = (fromIndex, toIndex) => {
-    const updatedItems = [...batchItems];
-    const [movedItem] = updatedItems.splice(fromIndex, 1);
-    updatedItems.splice(toIndex, 0, movedItem);
-    setBatchItems(updatedItems);
-  };
-
-  const moveToTop = (index) => {
-    moveBatch(index, 0);
-  };
-
-  const moveToBottom = (index) => {
-    moveBatch(index, batchItems.length - 1);
-  };
-
-  const deleteBatch = (index) => {
-    setBatchItems(batchItems.filter((_, i) => i !== index));
+  const handleSearchResult = (result) => {
+    setRowData(
+      currentPageData.filter((item) =>
+        item.title.toLowerCase().includes(result.toLowerCase())
+      )
+    );
+    setSearchedData(
+      currentPageData.filter((item) =>
+        item.title.toLowerCase().includes(result.toLowerCase())
+      )
+    );
   };
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <div
-        className="bg-[#F9F7F7] max-h-[785px] max-w-[1223px] rounded-[18px] mx-auto"
-        style={{ boxShadow: "2px 2px 3px 0px rgba(0, 0, 0, 0.25)" }}
-      >
-        <div className="px-[39px] py-[35px]">
-          <div className="text flex flex-col gap-[10px]">
-            <span className="font-bold text-[40px] leading-[48.41px]">
-              Manage Bundle
-            </span>
-            <span className="font-normal text-[20px] leading-[24.2px] text-[#4B4747]">
-              Change orders of the products based on priority
-            </span>
-          </div>
-          <div className="batch flex flex-col gap-3 mt-[31px]">
-            {batchItems.map((batch, index) => (
-              <DraggableBatch
-                key={batch.id}
-                batch={batch}
-                index={index}
-                moveBatch={moveBatch}
-                moveToTop={moveToTop}
-                moveToBottom={moveToBottom}
-                deleteBatch={deleteBatch}
-              />
-            ))}
-          </div>
-        </div>
+    <div className="max-w-[1223px] mx-auto rounded-[18px] shadow-[2px 2px 3px 0px rgba(0, 0, 0, 0.25)] bg-[#F9F7F7] px-[35px] py-[39px]">
+      <Heading />
+      <Search onSearchResult={handleSearchResult} />
+      <div className="ag-theme-alpine mt-[40px] w-full h-[450px]">
+        <AgGridReact
+          columnDefs={columnDefs}
+          rowData={rowData}
+          // domLayout="autoHeight"
+          gridOptions={gridOptions} // Apply grid options
+        />
       </div>
-    </DndProvider>
+      <Pagination
+        onPageSizeChange={changePageSize}
+        leftArrowClick={leftArrowClick}
+        rightArrowClick={rightArrowClick}
+        isPageFirst={pageIndex === 0}
+        isPageLast={pageSize * (pageIndex + 1) >= len}
+      />
+    </div>
   );
 }
 
-export default Batches;
+export default CourseList;

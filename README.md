@@ -74,7 +74,7 @@ This project consists of three main tasks:
 ![OTP Form Success](public/image3.png)
 
 ### Batches Draggable
-![Batches Draggable](public/batches.png)
+![Batches Draggable](public/image4.png)
 
 ### Course List Table
 ![Course List Table](public/course-list.png)
