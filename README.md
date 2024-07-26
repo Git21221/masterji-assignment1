@@ -40,7 +40,7 @@ This project consists of three main tasks:
 ## Usage
 
 - Navigate to `/otp-form` to use the OTP form.
-- Navigate to `/course-list` to view the dragable course list.
+- Navigate to `/course-list` to view the draggable course list.
 - Navigate to `/batches` to view the batches table.
 
 ## Features

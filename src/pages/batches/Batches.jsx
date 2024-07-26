@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
-import { courseList as data } from "../../util/courseList";
+import { batches as data } from "../../util/batches";
 import { height } from "@mui/system";
 import "./Batches.css";
 import Pagination from "../../components/batches/Pagination";

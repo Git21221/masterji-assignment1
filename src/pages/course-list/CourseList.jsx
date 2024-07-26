@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { batches } from "../../util/batches";
+import { courseList as batches } from "../../util/courseList";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { MdOutlineDragIndicator } from "react-icons/md";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
