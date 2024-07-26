@@ -54,17 +54,17 @@ This project consists of three main tasks:
   - The OTP must match the preset value (`1234`).
 - **Hosted Route**: https://assignment-masterji.netlify.app/otp-form
 
-### Batches Draggable
-
-- **Route**: `/batches`
-- **Functionality**: A list of batches that can be reordered via drag and drop.
-- **Hosted Route**: https://assignment-masterji.netlify.app/batches
-
 ### Course List Table
 
 - **Route**: `/course-list`
-- **Functionality**: A table displaying a list of courses.
+- **Functionality**: A table displaying a list of courses that can be reordered using drag and drop.
 - **Hosted Route**: https://assignment-masterji.netlify.app/course-list
+
+### Batches Draggable
+
+- **Route**: `/batches`
+- **Functionality**: A list of batches in a table with pagination and search feature.
+- **Hosted Route**: https://assignment-masterji.netlify.app/batches
 
 ## Screenshots
 
@@ -74,10 +74,10 @@ This project consists of three main tasks:
 ![OTP Form Success](public/image3.png)
 
 ### Batches Draggable
-![Batches Draggable](public/image4.png)
+![Batches](public/image6.png)
 
-### Course List Table
-![Course List Table](public/course-list.png)
+### Course List
+![Course List](public/image4.png)
 
 ## Technologies
 

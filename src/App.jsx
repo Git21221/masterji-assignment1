@@ -11,8 +11,8 @@ function App() {
         params.pathname === "/otp-form"
           ? "bg-[#3F72AF]"
           : params.pathname === "/batches"
-          ? "bg-[#D2E3C8]"
-          : "bg-[#E2BBE9]"
+          ? "bg-[#E2BBE9]"
+          : "bg-[#D2E3C8]"
       } h-screen w-screen`}
     >
       <Chaiaurcodetext className={"text-white"} />
