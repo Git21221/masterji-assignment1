@@ -4,16 +4,16 @@
 
 This project consists of three main tasks:
 1. **OTP Form**: A form to input and verify an OTP.
-2. **Batches Draggable**: A draggable list of batches.
-3. **Course List Table**: A table displaying a list of courses.
+3. **Course List Draggable**: A list displaying a list of courses, can be reordered using drag and drop.
+2. **Batches Table**: A list of batches with pagination and search feature.
 
 ## Table of Contents
 - [Installation](#installation)
 - [Usage](#usage)
 - [Features](#features)
   - [OTP Form](#otp-form)
-  - [Batches Draggable](#batches-draggable)
-  - [Course List Table](#course-list-table)
+  - [Course List Draggable](#course-list-draggable)
+  - [Batches Table](#batches-table)
 - [Screenshots](#screenshots)
 - [Technologies](#technologies)
 - [License](#license)
@@ -40,8 +40,8 @@ This project consists of three main tasks:
 ## Usage
 
 - Navigate to `/otp-form` to use the OTP form.
-- Navigate to `/batches` to use the draggable batches list.
-- Navigate to `/course-list` to view the course list table.
+- Navigate to `/course-list` to view the dragable course list.
+- Navigate to `/batches` to view the batches table.
 
 ## Features
 
@@ -54,13 +54,13 @@ This project consists of three main tasks:
   - The OTP must match the preset value (`1234`).
 - **Hosted Route**: https://assignment-masterji.netlify.app/otp-form
 
-### Course List Table
+### Course List Draggable
 
 - **Route**: `/course-list`
 - **Functionality**: A table displaying a list of courses that can be reordered using drag and drop.
 - **Hosted Route**: https://assignment-masterji.netlify.app/course-list
 
-### Batches Draggable
+### Batches Table
 
 - **Route**: `/batches`
 - **Functionality**: A list of batches in a table with pagination and search feature.
@@ -73,18 +73,17 @@ This project consists of three main tasks:
 ![OTP Form Validation](public/image2.png)
 ![OTP Form Success](public/image3.png)
 
-### Batches Draggable
+### Course List Draggable
+![Course List](public/image4.png)
+
+### Batches Table
 ![Batches](public/image6.png)
 
-### Course List
-![Course List](public/image4.png)
 
 ## Technologies
 
 - React
 - React Router
-- HTML5
-- CSS3
 - JavaScript (ES6+)
 
 ## License
